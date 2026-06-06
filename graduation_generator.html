@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graduation Celebration Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
+body{
+background:linear-gradient(135deg,#001f54,#003566,#ffd60a);
+min-height:100vh;padding:30px;display:flex;justify-content:center;align-items:center}
+.container{
+background:#fff;max-width:1000px;width:100%;padding:30px;border-radius:20px;
+box-shadow:0 15px 40px rgba(0,0,0,.25)}
+h1{text-align:center;color:#003566}
+.subtitle{text-align:center;color:#666;margin:10px 0 25px}
+label{display:block;margin-top:12px;font-weight:bold;color:#003566}
+input{width:100%;padding:12px;margin-top:5px;border:2px solid #ddd;border-radius:10px}
+button{width:100%;padding:14px;border:none;border-radius:10px;margin-top:15px;font-weight:bold;cursor:pointer}
+.generate-btn{background:#003566;color:white}
+.copy-btn{background:#ffd60a;color:#003566}
+.download-btn{background:#28a745;color:white}
+#preview{display:none;width:180px;height:180px;object-fit:cover;border-radius:50%;border:5px solid #ffd60a;margin:15px auto}
+.upload{text-align:center}
+#message{display:none;margin-top:25px}
+.graduation-card{
+background:white;padding:35px;border-radius:20px;border:8px solid #ffd60a;
+box-shadow:0 10px 30px rgba(0,0,0,.15);position:relative}
+.message-card{display:flex;justify-content:space-between;gap:25px;align-items:center}
+.message-text{flex:1}
+.message-text p{margin-top:15px;line-height:1.8}
+.message-photo img{
+width:250px;height:250px;object-fit:cover;border-radius:15px;
+border:6px solid #ffd60a}
+.celebrate{text-align:center;font-size:40px;margin-bottom:10px}
+.footer{text-align:center;color:#c99700;margin-top:20px}
+@media(max-width:768px){
+.message-card{flex-direction:column-reverse;text-align:center}
+.message-photo img{width:180px;height:180px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🎓 Graduation Celebration Generator 🎉</h1>
+<p class="subtitle">Create a beautiful graduation card and save it as JPEG</p>
+
+<label>Graduate Name</label>
+<input id="name" type="text">
+
+<label>School / University</label>
+<input id="school" type="text">
+
+<label>Year of Completion</label>
+<input id="year" type="number">
+
+<div class="upload">
+<label>Upload Graduate Photo</label>
+<input id="photo" type="file" accept="image/*">
+<img id="preview">
+</div>
+
+<button class="generate-btn" onclick="generateMessage()">🎉 Generate Graduation Card</button>
+
+<div id="message"></div>
+
+<button class="copy-btn" onclick="copyMessage()">📋 Copy Message</button>
+<button class="download-btn" onclick="downloadCard()">📸 Download Card as JPEG</button>
+</div>
+
+<script>
+let uploadedPhoto="";
+
+document.getElementById("photo").addEventListener("change",e=>{
+ const file=e.target.files[0];
+ if(!file) return;
+ const reader=new FileReader();
+ reader.onload=function(ev){
+  uploadedPhoto=ev.target.result;
+  const p=document.getElementById("preview");
+  p.src=uploadedPhoto;
+  p.style.display="block";
+ }
+ reader.readAsDataURL(file);
+});
+
+function generateMessage(){
+ const name=document.getElementById("name").value;
+ const school=document.getElementById("school").value;
+ const year=document.getElementById("year").value;
+
+ if(!name||!school||!year){alert("Please fill all fields.");return;}
+
+ document.getElementById("message").innerHTML=`
+ <div class="graduation-card">
+  <div class="message-card">
+   <div class="message-text">
+    <div class="celebrate">🎓🎉🏆</div>
+    <h2 style="color:#003566">Congratulations, ${name}!</h2>
+    <p>Today we proudly celebrate your graduation from <b>${school}</b> in <b>${year}</b>.</p>
+    <p>Your hard work, dedication, and perseverance have paid off. This achievement marks the beginning of a bright future filled with opportunity and success.</p>
+    <p>May you continue to pursue your dreams with confidence and make a positive impact wherever life takes you.</p>
+    <div class="footer"><h3>🎊 Congratulations Graduate! 🎊</h3></div>
+   </div>
+   <div class="message-photo">
+    ${uploadedPhoto ? `<img src="${uploadedPhoto}">` : ""}
+   </div>
+  </div>
+ </div>`;
+ document.getElementById("message").style.display="block";
+}
+
+function copyMessage(){
+ const t=document.getElementById("message").innerText;
+ if(!t){alert("Generate a card first.");return;}
+ navigator.clipboard.writeText(t);
+ alert("Message copied.");
+}
+
+function downloadCard(){
+ const card=document.querySelector(".graduation-card");
+ if(!card){alert("Generate a card first.");return;}
+ html2canvas(card,{scale:3,backgroundColor:"#ffffff"}).then(canvas=>{
+  const a=document.createElement("a");
+  a.download="graduation-card.jpeg";
+  a.href=canvas.toDataURL("image/jpeg",1.0);
+  a.click();
+ });
+}
+</script>
+</body>
+</html>
